@@ -5,6 +5,9 @@ import java.sql.*;
 
 public class Main {
     public static void main(String[] args) throws Exception {
+        DatabaseConfig config = DatabaseConfig.load();
+        System.out.println(config.getConnectionString());
+
         JFrame frame = new JFrame();
         frame.setSize(800, 600);
 
@@ -12,7 +15,7 @@ public class Main {
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
 
         System.out.println("connecting...");
-        Connection conn = DriverManager.getConnection("jdbc:mariadb://wheatley.cs.up.ac.za/u22563777", "u22563777", "OSRXLTJJCHWLYNT7K7NFL7SPMHEVDG3X");
+        Connection conn = DriverManager.getConnection(config.getConnectionString(), config.getUsername(), config.getPassword());
         PreparedStatement statement = conn.prepareStatement("SELECT make, model FROM cars");
         ResultSet set = statement.executeQuery();
         int count = 0;
