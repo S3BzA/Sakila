@@ -1,10 +1,10 @@
-package sakila;
+package sakila.model;
 
 public class DatabaseConfig {
     private final String proto, host, port, database;
     private final String username, password;
 
-    static DatabaseConfig load() throws IllegalStateException {
+    public static DatabaseConfig load() throws IllegalStateException {
         return new DatabaseConfig();
     }
 
