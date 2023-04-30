@@ -12,8 +12,7 @@ public class StaffModel {
         Connection connection = Database.getConnection();
         selectAll = connection.prepareStatement("""
             SELECT
-                first_name,
-                last_name,
+                CONCAT(first_name, ' ', last_name) as name,
                 address,
                 address2,
                 district,
