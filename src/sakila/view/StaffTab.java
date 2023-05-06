@@ -56,8 +56,6 @@ public class StaffTab extends JPanel {
         panel.add(new JLabel("Name"));
         panel.add(textField);
 
-        panel.setMinimumSize(new Dimension(200, 300));
-
         add(scrollPane, BorderLayout.CENTER);
         add(panel, BorderLayout.LINE_END);
         updateResults();
