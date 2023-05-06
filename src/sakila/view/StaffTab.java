@@ -28,7 +28,7 @@ public class StaffTab extends JPanel {
         JPanel panel = new JPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
 
-        RadioSelect select = new RadioSelect("Activity:", new String[][]{
+        RadioSelect select = new RadioSelect(new String[][]{
                 {"any", "Any"} ,
                 {"active", "Active"} ,
                 {"inactive", "Inactive"} ,
@@ -50,7 +50,9 @@ public class StaffTab extends JPanel {
         });
         textField.setMaximumSize(new Dimension(Integer.MAX_VALUE, 50));
 
+        panel.add(new JLabel("Activity"));
         panel.add(select);
+
         panel.add(new JLabel("Name"));
         panel.add(textField);
 
