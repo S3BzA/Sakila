@@ -26,6 +26,8 @@ public class StaffTab extends JPanel {
         table.setFillsViewportHeight(true);
 
         JPanel panel = new JPanel();
+        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+
         RadioSelect select = new RadioSelect("Activity:", new String[][]{
                 {"any", "Any"} ,
                 {"active", "Active"} ,
@@ -40,14 +42,23 @@ public class StaffTab extends JPanel {
             }
             updateResults();
         });
-        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+
+        JTextField textField = new JTextField();
+        textField.addActionListener(e -> {
+            model.setSearchName(e.getActionCommand());
+            updateResults();
+        });
+        textField.setMaximumSize(new Dimension(Integer.MAX_VALUE, 50));
+
         panel.add(select);
+        panel.add(new JLabel("Name"));
+        panel.add(textField);
 
         panel.setMinimumSize(new Dimension(200, 300));
 
         add(scrollPane, BorderLayout.CENTER);
         add(panel, BorderLayout.LINE_END);
-
+        updateResults();
     }
     private void updateResults() {
         try {
