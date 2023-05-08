@@ -4,6 +4,8 @@ import javax.swing.table.AbstractTableModel;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.time.Instant;
 
 public class ResultSetTableModel extends AbstractTableModel {
     ResultSet resultSet;
@@ -113,9 +115,11 @@ public class ResultSetTableModel extends AbstractTableModel {
         try {
             resultSet.absolute(rowIndex + 1);
             resultSet.updateObject(columnIndex+1, aValue);
+            resultSet.updateTimestamp("last_update", Timestamp.from(Instant.now()));
             resultSet.updateRow();
-            fireTableCellUpdated(rowIndex, columnIndex);
         }
-        catch(SQLException ignored) {}
+        catch(SQLException e) {
+            System.out.println(e.getMessage());
+        }
     }
 }
