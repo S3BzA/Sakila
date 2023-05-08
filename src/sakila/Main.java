@@ -1,5 +1,7 @@
 package sakila;
 
+import sakila.model.DatabaseConfig;
+
 import javax.swing.*;
 import java.sql.*;
 
