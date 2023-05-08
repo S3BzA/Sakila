@@ -40,7 +40,7 @@ public class ClientsTab extends JPanel {
                 updateResults();
             }
             catch(SQLException ex) {
-                System.out.println(ex.getMessage());
+                exceptionError(ex, "Error deleting customer");
             }
         });
         sidebar.add(deleteButton);
@@ -49,12 +49,17 @@ public class ClientsTab extends JPanel {
         add(sidebar, BorderLayout.PAGE_END);
         updateResults();
     }
+    void exceptionError(SQLException exception, String title) {
+        JOptionPane.showMessageDialog(SwingUtilities.getWindowAncestor(this),
+                exception.getMessage(), title, JOptionPane.ERROR_MESSAGE);
+    }
     private void updateResults() {
         try {
             ResultSet set = model.getAll();
             tableModel.setResultSet(set);
         }
-        catch(SQLException ignored) {
+        catch(SQLException e) {
+            exceptionError(e, "Error updating results");
         }
     }
 }
