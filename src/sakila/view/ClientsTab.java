@@ -21,10 +21,32 @@ public class ClientsTab extends JPanel {
         setLayout(new BorderLayout(10, 10));
 
         JTable table = new JTable(tableModel);
-        JScrollPane scrollPane = new JScrollPane(table);
+        table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         table.setFillsViewportHeight(true);
+        JScrollPane scrollPane = new JScrollPane(table);
+
+        JPanel sidebar = new JPanel();
+        sidebar.setLayout(new BoxLayout(sidebar, BoxLayout.LINE_AXIS));
+
+        JButton deleteButton = new JButton("Delete");
+        deleteButton.addActionListener(e -> {
+            int row = table.getSelectedRow();
+            if(row == -1) return;
+
+            int client = model.getCustomerFromRow(row);
+            if(client == -1) return;
+            try {
+                model.removeUser(client);
+                updateResults();
+            }
+            catch(SQLException ex) {
+                System.out.println(ex.getMessage());
+            }
+        });
+        sidebar.add(deleteButton);
 
         add(scrollPane, BorderLayout.CENTER);
+        add(sidebar, BorderLayout.PAGE_END);
         updateResults();
     }
     private void updateResults() {
