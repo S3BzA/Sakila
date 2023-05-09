@@ -7,7 +7,6 @@ import java.sql.SQLException;
 
 public class StaffModel {
     private final PreparedStatement selectAll;
-
     private String searchName = null;
     private Boolean searchActive = null;
 
