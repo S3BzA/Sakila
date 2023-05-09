@@ -22,6 +22,8 @@ public class AddressModel {
         }
     }
 
+    PreparedStatement getCountry;
+
     PreparedStatement addCountry;
     PreparedStatement addCity;
     PreparedStatement addAddress;
@@ -40,9 +42,11 @@ public class AddressModel {
     private AddressModel() throws SQLException {
         Connection connection = Database.getConnection();
 
-        addAddress = connection.prepareStatement("INSERT INTO country(country) VALUES (?)", Statement.RETURN_GENERATED_KEYS);
+        addCountry = connection.prepareStatement("INSERT INTO country(country) VALUES (?)", Statement.RETURN_GENERATED_KEYS);
         addCity = connection.prepareStatement("INSERT INTO city(country_id, country) VALUES (?, ?)", Statement.RETURN_GENERATED_KEYS);
-        addCountry = connection.prepareStatement("INSERT INTO address(address, address2, district, city_id, postal_code, phone) VALUES (?,?,?,?,?,?)", Statement.RETURN_GENERATED_KEYS);
+        addAddress = connection.prepareStatement("INSERT INTO address(address, address2, district, city_id, postal_code, phone) VALUES (?,?,?,?,?,?)", Statement.RETURN_GENERATED_KEYS);
+
+        getCountry = connection.prepareStatement("SELECT country_id FROM country WHERE country=?");
 
         getCities = connection.prepareStatement("SELECT city_id, city, ci.country_id as country_id FROM city ci INNER JOIN country co ON ci.country_id = co.country_id WHERE country like ?");
         getCountries = connection.prepareStatement("SELECT country_id, country FROM country");
@@ -52,19 +56,23 @@ public class AddressModel {
         if(set.next()) return set.getInt(1);
         return -1;
     }
-    public int addAddress(Address address) throws SQLException {
-        addCountry.setString(1, address.country);
-        addCountry.executeUpdate();
 
-        addCity.setInt(1, getInsertKey(addCountry));
-        addCity.setString(2, address.city);
+    private int addCity(String city, int country) throws SQLException {
+        addCity.setInt(1, country);
+        addCity.setString(1, city);
         addCity.executeUpdate();
+        return getInsertKey(addCity);
+    }
 
-        addAddress.setString(3, address.addr1);
-        addAddress.setString(4, address.addr2);
-        addAddress.setString(5, address.district);
-        addAddress.setInt(6, getInsertKey(addCity));
-        addAddress.setString(7, address.postalCode);
+    public int addAddress(Address address) throws SQLException {
+        int country = getCountryID(address.country);
+        int city = addCity(address.city, country);
+
+        addAddress.setString(1, address.addr1);
+        addAddress.setString(2, address.addr2);
+        addAddress.setString(3, address.district);
+        addAddress.setInt(4, city);
+        addAddress.setString(5, address.postalCode);
         addAddress.setString(8, address.phone);
         addAddress.executeUpdate();
         return getInsertKey(addAddress);
@@ -81,6 +89,12 @@ public class AddressModel {
 
         return cities;
     }
+
+    /**
+     * Retrieves a list of country names and their IDs
+     * @return An array of countries with their name and database ID
+     * @throws SQLException Exception?
+     */
     public Country[] getCountries() throws SQLException {
         ResultSet res = getCountries.executeQuery();
         res.last();
@@ -91,5 +105,25 @@ public class AddressModel {
         }
 
         return countries;
+    }
+
+    /**
+     * Retrieves the ID of the country with the given name,
+     * or inserts it if no country is found
+     * @param country The country to search for
+     * @return The ID of the country
+     * @throws SQLException Lekke mos :)
+     */
+    private int getCountryID(String country) throws SQLException {
+        getCountry.setString(1, country);
+        ResultSet set = getCountry.executeQuery();
+        if(set.next()) return set.getInt(1);
+
+        addCountry.setString(1, country);
+        addCountry.executeUpdate();
+
+        set = addCountry.getGeneratedKeys();
+        set.next();
+        return set.getInt(1);
     }
 }
