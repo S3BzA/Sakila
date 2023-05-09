@@ -31,7 +31,7 @@ public class StaffTab extends JPanel {
         RadioSelect select = new RadioSelect(new String[][]{
                 {"any", "Any"} ,
                 {"active", "Active"} ,
-                {"inactive", "Inactive"} ,
+                {"inactive", "Inactive"}
         });
         select.addActionListener(e -> {
             String action = e.getActionCommand();

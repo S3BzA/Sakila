@@ -1,5 +1,6 @@
 package sakila;
 
+
 import sakila.model.*;
 import sakila.view.NotificationsTab;
 import sakila.view.StaffTab;
@@ -8,8 +9,9 @@ import javax.swing.*;
 
 public class Main {
     public static void main(String[] args) throws Exception {
+
         UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-        JFrame win = new JFrame("Result Set Demo");
+        JFrame win = new JFrame("Sakila");
         win.setSize(800, 600);
         win.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
