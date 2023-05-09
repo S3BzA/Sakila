@@ -1,7 +1,9 @@
 package sakila.view;
 
+import sakila.model.AddressModel;
 import sakila.model.CustomerModel;
 import sakila.model.ResultSetTableModel;
+import sakila.model.StoreModel;
 
 import javax.swing.*;
 import java.awt.*;
@@ -9,12 +11,17 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class ClientsTab extends JPanel {
-    CustomerModel model;
+    CustomerModel customerModel;
+    AddressModel addressModel;
+    StoreModel storeModel;
     ResultSetTableModel tableModel;
 
-    public ClientsTab(CustomerModel model) {
+    public ClientsTab(CustomerModel customerModel, AddressModel addressModel, StoreModel storeModel) {
         super();
-        this.model = model;
+        this.customerModel = customerModel;
+        this.addressModel = addressModel;
+        this.storeModel = storeModel;
+
         this.tableModel = new ResultSetTableModel();
 
         setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
@@ -33,20 +40,41 @@ public class ClientsTab extends JPanel {
             int row = table.getSelectedRow();
             if(row == -1) return;
 
-            int client = model.getCustomerFromRow(row);
+            int client = customerModel.getCustomerFromRow(row);
             if(client == -1) return;
             try {
-                model.removeUser(client);
+                customerModel.removeUser(client);
                 updateResults();
             }
             catch(SQLException ex) {
                 exceptionError(ex, "Error deleting customer");
             }
         });
-        CustomerEditor editor = new CustomerEditor(SwingUtilities.getWindowAncestor(this), false);
         JButton editButton = new JButton("Edit");
         editButton.addActionListener(e -> {
-            editor.setVisible(true);
+            int row = table.getSelectedRow();
+            if(row == -1) return;
+
+            int id = customerModel.getCustomerFromRow(row);
+            if(id == -1) return;
+
+            try {
+                CustomerModel.Customer customer = customerModel.getByID(id);
+                AddressModel.Address address = addressModel.getByID(customer.address());
+                StoreModel.Store store = storeModel.getByID(customer.store());
+
+                CustomerEditor editor = new CustomerEditor(SwingUtilities.getWindowAncestor(this), false);
+                editor.setCustomer(customer);
+                editor.setAddress(address);
+                editor.setStore(store);
+                editor.setVisible(true);
+                if(!editor.hasCommited()) return;
+                System.out.println("Done");
+            }
+            catch(SQLException ex) {
+                exceptionError(ex, "Error editing Customer");
+            }
+
         });
         sidebar.add(deleteButton);
         sidebar.add(editButton);
@@ -61,7 +89,7 @@ public class ClientsTab extends JPanel {
     }
     private void updateResults() {
         try {
-            ResultSet set = model.getAll();
+            ResultSet set = customerModel.getAll();
             tableModel.setResultSet(set);
         }
         catch(SQLException e) {
