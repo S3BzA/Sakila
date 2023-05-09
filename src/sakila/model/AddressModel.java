@@ -59,7 +59,7 @@ public class AddressModel {
                 Ci.city as city
             FROM address A
                 INNER JOIN city Ci on Ci.city_id = A.city_id
-                INNER JOIN city Co on Ci.country_id = Co.country_id
+                INNER JOIN country Co on Ci.country_id = Co.country_id
             WHERE address_id=?;
         """);
 

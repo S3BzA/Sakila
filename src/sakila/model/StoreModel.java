@@ -44,7 +44,7 @@ public class StoreModel {
             FROM store S
                 INNER JOIN address A ON S.address_id = A.address_id
                 INNER JOIN city C on A.city_id = C.city_id
-                INNER JOIN city Co on C.country_id = C.country_id;
+                INNER JOIN city Co on C.country_id = C.country_id
             WHERE store_id=?
         """);
     }
