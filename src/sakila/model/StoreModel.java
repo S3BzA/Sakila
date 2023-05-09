@@ -14,6 +14,7 @@ public class StoreModel {
     }
 
     PreparedStatement displayNames;
+    PreparedStatement getStore;
     static StoreModel instance = null;
     private StoreModel() throws SQLException {
         Connection connection = Database.getConnection();
@@ -30,6 +31,21 @@ public class StoreModel {
                 INNER JOIN address A ON S.address_id = A.address_id
                 INNER JOIN city C on A.city_id = C.city_id
                 INNER JOIN city Co on C.country_id = C.country_id;
+        """);
+        getStore = connection.prepareStatement("""
+            SELECT DISTINCT
+                store_id,
+                CONCAT(
+                    COALESCE(A.address, ""), " ",
+                    COALESCE(A.address2, ""), ", ",
+                    COALESCE(A.district, ""), " ",
+                    COALESCE(C.city, "")
+                )as display_name
+            FROM store S
+                INNER JOIN address A ON S.address_id = A.address_id
+                INNER JOIN city C on A.city_id = C.city_id
+                INNER JOIN city Co on C.country_id = C.country_id;
+            WHERE store_id=?
         """);
     }
     public static StoreModel getInstance() throws SQLException {
@@ -48,5 +64,14 @@ public class StoreModel {
             stores[i++] = new Store(set.getInt("store_id"), set.getString("display_name"));
         }
         return stores;
+    }
+    public Store getByID(int id) throws SQLException {
+        getStore.setInt(1, id);
+        ResultSet res = getStore.executeQuery();
+        if(!res.next()) return null;
+        return new StoreModel.Store(
+            res.getInt("store_id"),
+            res.getString("display_name")
+        );
     }
 }
