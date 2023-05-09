@@ -8,6 +8,7 @@ import sakila.model.StoreModel;
 import javax.swing.*;
 import java.awt.*;
 import java.sql.SQLException;
+import java.util.Objects;
 
 import static sakila.view.GridUtils.constraint;
 import static sakila.view.GridUtils.horizontalFiller;
@@ -47,6 +48,10 @@ public class CustomerEditor extends JDialog {
         JPanel bottomBar = new JPanel();
         JButton okButton = new JButton("OK");
         okButton.addActionListener(e -> {
+            if(!isValidClient()) {
+                JOptionPane.showMessageDialog(this, "All fields must be filled in", "Error creating customer", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
             commit = true;
             setVisible(false);
         });
@@ -93,6 +98,7 @@ public class CustomerEditor extends JDialog {
 
     public AddressModel.Address getAddress() {
         AddressModel.Address edited = addressEditor.getAddress();
+        if(creator) return edited;
         if(edited.equals(curAddress)) return null;
         return edited;
     }
@@ -101,10 +107,18 @@ public class CustomerEditor extends JDialog {
                 firstName.getText(),
                 lastName.getText(),
                 email.getText(),
-                curCustomer.address(),
-                curCustomer.store()
+                creator ? -1 : curCustomer.address(),
+                ((StoreModel.Store) Objects.requireNonNull(storeSelect.getSelectedItem())).id()
         );
+        if(creator) return edited;
         if(edited.equals(curCustomer)) return null;
         return edited;
+    }
+    private boolean isValidClient() {
+        if(!addressEditor.isValidAddress()) return false;
+        if(firstName.getText().isEmpty()) return false;
+        if(lastName.getText().isEmpty()) return false;
+        if(email.getText().isEmpty()) return false;
+        return true;
     }
 }

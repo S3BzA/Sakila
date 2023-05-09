@@ -6,6 +6,7 @@ import sakila.view.GridUtils;
 import javax.swing.*;
 import java.awt.*;
 import java.sql.SQLException;
+import java.util.Objects;
 
 public class AddressEditor extends JPanel {
 
@@ -92,5 +93,14 @@ public class AddressEditor extends JPanel {
         if(obj instanceof String) return (String) obj;
 
         return ((AddressModel.Country) obj).name();
+    }
+    public boolean isValidAddress() {
+        if(addr1.getText().isEmpty()) return false;
+        if(district.getText().isEmpty()) return false;
+        if(postalCode.getText().isEmpty()) return false;
+        if(phone.getText().isEmpty()) return false;
+        if(Objects.requireNonNull(getCity()).isEmpty()) return false;
+        if(Objects.requireNonNull(getCountry()).isEmpty()) return false;
+        return true;
     }
 }

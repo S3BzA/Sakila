@@ -91,8 +91,32 @@ public class ClientsTab extends JPanel {
             }
 
         });
+        JButton addButton = new JButton("Add Customer");
+        addButton.addActionListener(e -> {
+            CustomerEditor editor = new CustomerEditor(SwingUtilities.getWindowAncestor(this), true);
+            editor.setVisible(true);
+            if(!editor.hasCommited()) return;
+
+            CustomerModel.Customer newCustomer = editor.getCustomer();
+            AddressModel.Address newAddress = editor.getAddress();
+
+
+            System.out.println(newCustomer);
+            System.out.println(newAddress);
+            try {
+                int id = addressModel.addAddress(newAddress);
+                customerModel.addUser(newCustomer.firstName(), newCustomer.lastName(), newCustomer.lastName(), id, newCustomer.store());
+                updateResults();
+            }
+            catch(SQLException ex) {
+                exceptionError(ex, "Error creating Customer");
+            }
+
+        });
+
         sidebar.add(deleteButton);
         sidebar.add(editButton);
+        sidebar.add(addButton);
 
         add(scrollPane, BorderLayout.CENTER);
         add(sidebar, BorderLayout.PAGE_END);
