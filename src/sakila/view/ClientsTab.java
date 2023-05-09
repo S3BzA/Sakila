@@ -69,7 +69,22 @@ public class ClientsTab extends JPanel {
                 editor.setStore(store);
                 editor.setVisible(true);
                 if(!editor.hasCommited()) return;
-                System.out.println("Done");
+
+                CustomerModel.Customer editedCustomer = editor.getCustomer();
+                AddressModel.Address editedAddress = editor.getAddress();
+                if(editedAddress != null) {
+                    int aid = addressModel.addAddress(editedAddress);
+                    if(editedCustomer != null) editedCustomer = new CustomerModel.Customer(
+                            editedCustomer.firstName(),
+                            editedCustomer.lastName(),
+                            editedCustomer.email(),
+                            aid,
+                            editedCustomer.store()
+                    );
+                }
+
+                if(editedCustomer != null) customerModel.updateCustomer(id, editedCustomer);
+                if(editedCustomer == null || editedAddress == null) updateResults();
             }
             catch(SQLException ex) {
                 exceptionError(ex, "Error editing Customer");

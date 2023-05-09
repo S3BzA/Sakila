@@ -23,6 +23,8 @@ public class CustomerEditor extends JDialog {
 
     boolean commit = false;
     public boolean hasCommited() { return commit; }
+    CustomerModel.Customer curCustomer = null;
+    AddressModel.Address curAddress = null;
 
     public CustomerEditor(Window owner, boolean creator) {
         super(owner, "Customer Editor", ModalityType.APPLICATION_MODAL);
@@ -49,9 +51,7 @@ public class CustomerEditor extends JDialog {
             setVisible(false);
         });
         JButton cancelButton = new JButton("Cancel");
-        cancelButton.addActionListener(e -> {
-            setVisible(false);
-        });
+        cancelButton.addActionListener(e -> setVisible(false));
         bottomBar.setLayout(new FlowLayout(FlowLayout.TRAILING));
         bottomBar.add(okButton);
         bottomBar.add(cancelButton);
@@ -81,11 +81,30 @@ public class CustomerEditor extends JDialog {
         firstName.setText(customer.firstName());
         lastName.setText(customer.lastName());
         email.setText(customer.email());
+        curCustomer = customer;
     }
     public void setStore(StoreModel.Store store) {
         storeSelect.setSelectedItem(store);
     }
     public void setAddress(AddressModel.Address address) {
         addressEditor.setAddress(address);
+        curAddress = address;
+    }
+
+    public AddressModel.Address getAddress() {
+        AddressModel.Address edited = addressEditor.getAddress();
+        if(edited.equals(curAddress)) return null;
+        return edited;
+    }
+    public CustomerModel.Customer getCustomer() {
+        CustomerModel.Customer edited = new CustomerModel.Customer(
+                firstName.getText(),
+                lastName.getText(),
+                email.getText(),
+                curCustomer.address(),
+                curCustomer.store()
+        );
+        if(edited.equals(curCustomer)) return null;
+        return edited;
     }
 }

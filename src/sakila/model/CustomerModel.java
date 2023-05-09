@@ -36,7 +36,7 @@ public class CustomerModel {
                 first_name=?,
                 last_name=?,
                 email=?,
-                address_id=?,
+                address_id=?
             WHERE customer_id=?
         """);
         getCustomer = connection.prepareStatement("""
@@ -96,4 +96,5 @@ public class CustomerModel {
 
         }
     }
+
 }
