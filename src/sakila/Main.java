@@ -1,38 +1,27 @@
 package sakila;
 
-import sakila.model.DatabaseConfig;
+import sakila.model.*;
+import sakila.view.NotificationsTab;
+import sakila.view.StaffTab;
 
 import javax.swing.*;
-import java.sql.*;
 
 public class Main {
     public static void main(String[] args) throws Exception {
-        DatabaseConfig config = DatabaseConfig.load();
-        System.out.println(config.getConnectionString());
+        UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+        JFrame win = new JFrame("Result Set Demo");
+        win.setSize(800, 600);
+        win.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        JFrame frame = new JFrame();
-        frame.setSize(800, 600);
+        StaffModel model = new StaffModel();
 
-        JPanel panel = new JPanel();
-        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+        JTabbedPane tabbedPane = new JTabbedPane();
+        tabbedPane.add("Notifications", new NotificationsTab());
+        tabbedPane.add("Staff", new StaffTab(model));
+        tabbedPane.add("Film", new JLabel("Clothes?"));
+        tabbedPane.add("Report", new JLabel("Soup?"));
 
-        System.out.println("connecting...");
-        Connection conn = DriverManager.getConnection(config.getConnectionString(), config.getUsername(), config.getPassword());
-        PreparedStatement statement = conn.prepareStatement("SELECT make, model FROM cars");
-        ResultSet set = statement.executeQuery();
-        int count = 0;
-        while(set.next()) {
-            count++;
-            String make = set.getString(1);
-            String model = set.getString(2);
-            panel.add(new JLabel(make + " " + model));
-        }
-
-        conn.close();
-        System.out.println("closed! " + count);
-        frame.setContentPane(panel);
-        frame.setVisible(true);
-
-
+        win.setContentPane(tabbedPane);
+        win.setVisible(true);
     }
 }

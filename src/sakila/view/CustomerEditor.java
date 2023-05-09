@@ -64,14 +64,14 @@ public class CustomerEditor extends JDialog {
 
         add(new JLabel("Store"), constraint(0, 4, 2, 1));
         try {
-            StoreModel model = StoreModel.getInstance();
+            StoreModel model = new StoreModel();
             storeSelect = new JComboBox<>(model.getDisplayNames());
             storeSelect.setEnabled(creator);
 
             add(storeSelect, constraint(0, 5, 2, 1));
             add(Box.createVerticalStrut(10), constraint(0, 6, 2, 1));
 
-            AddressModel addressModel = AddressModel.getInstance();
+            AddressModel addressModel = new AddressModel();
             addressEditor = new AddressEditor(addressModel);
             add(addressEditor, constraint(0 ,7, 2, 1));
         }
