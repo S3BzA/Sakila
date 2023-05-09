@@ -14,7 +14,8 @@ public class StoreModel {
     }
 
     PreparedStatement displayNames;
-    public StoreModel() throws SQLException {
+    static StoreModel instance = null;
+    private StoreModel() throws SQLException {
         Connection connection = Database.getConnection();
         displayNames = connection.prepareStatement("""
             SELECT DISTINCT
@@ -30,6 +31,12 @@ public class StoreModel {
                 INNER JOIN city C on A.city_id = C.city_id
                 INNER JOIN city Co on C.country_id = C.country_id;
         """);
+    }
+    public static StoreModel getInstance() throws SQLException {
+        if(instance == null) {
+            instance = new StoreModel();
+        }
+        return instance;
     }
     public Store[] getDisplayNames() throws SQLException {
         ResultSet set = displayNames.executeQuery();
