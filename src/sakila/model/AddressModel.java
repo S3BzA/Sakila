@@ -32,15 +32,7 @@ public class AddressModel {
     PreparedStatement getCities;
     PreparedStatement getCountries;
 
-    static AddressModel instance = null;
-    public static AddressModel getInstance() throws SQLException {
-        if(instance == null) {
-            instance = new AddressModel();
-        }
-        return instance;
-    }
-
-    private AddressModel() throws SQLException {
+    public AddressModel() throws SQLException {
         Connection connection = Database.getConnection();
 
         addCountry = connection.prepareStatement("INSERT INTO country(country) VALUES (?)", Statement.RETURN_GENERATED_KEYS);

@@ -15,8 +15,8 @@ public class StoreModel {
 
     PreparedStatement displayNames;
     PreparedStatement getStore;
-    static StoreModel instance = null;
-    private StoreModel() throws SQLException {
+
+    public StoreModel() throws SQLException {
         Connection connection = Database.getConnection();
         displayNames = connection.prepareStatement("""
             SELECT DISTINCT
@@ -47,12 +47,6 @@ public class StoreModel {
                 INNER JOIN city Co on C.country_id = C.country_id
             WHERE store_id=?
         """);
-    }
-    public static StoreModel getInstance() throws SQLException {
-        if(instance == null) {
-            instance = new StoreModel();
-        }
-        return instance;
     }
     public Store[] getDisplayNames() throws SQLException {
         ResultSet set = displayNames.executeQuery();
