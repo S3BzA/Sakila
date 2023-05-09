@@ -3,31 +3,43 @@ package sakila.model;
 import java.sql.*;
 import java.time.Instant;
 
-public class ClientModel {
+public class CustomerModel {
     Connection connection;
 
+    public record Customer(int id, String firstName, String lastName, String email, int address) {}
+
     PreparedStatement all;
-    PreparedStatement removeClient;
-    PreparedStatement addClient;
+    PreparedStatement removeCustomer;
+    PreparedStatement addCustomer;
+    PreparedStatement setCustomer;
     PreparedStatement nextID;
 
     ResultSet currentSet = null;
 
-    public ClientModel() throws SQLException {
+    public CustomerModel() throws SQLException {
         connection = Database.getConnection();
         all = connection.prepareStatement("""
             SELECT *
             FROM customer_list
             WHERE notes LIKE "%active%"
         """);
-        removeClient = connection.prepareStatement("""
+        removeCustomer = connection.prepareStatement("""
             UPDATE customer
             SET active=FALSE, last_update=?
             WHERE customer_id=?
         """);
-        addClient = connection.prepareStatement("""
+        addCustomer = connection.prepareStatement("""
             INSERT INTO customer
             VALUES (?,?,?,?,?,?,TRUE,CURRENT_TIMESTAMP(),CURRENT_TIMESTAMP());
+        """);
+        setCustomer = connection.prepareStatement("""
+            UPDATE customer SET
+                first_name=?,
+                last_name=?,
+                email=?,
+                address_id=?,
+                last_update=CURRENT_TIMESTAMP()
+            WHERE customer_id=?
         """);
         nextID = connection.prepareStatement("SELECT MAX(customer_id)+1 as id FROM customer");
     }
@@ -38,21 +50,30 @@ public class ClientModel {
     }
 
     public void removeUser(int clientID) throws SQLException {
-        removeClient.setTimestamp(1, Timestamp.from(Instant.now()));
-        removeClient.setInt(2, clientID);
-        removeClient.executeUpdate();
+        removeCustomer.setTimestamp(1, Timestamp.from(Instant.now()));
+        removeCustomer.setInt(2, clientID);
+        removeCustomer.executeUpdate();
     }
     public int addUser(String fName, String lName, String email, int address, int store) throws SQLException {
         int id = newCustomerID();
-        addClient.setInt(1, id);
-        addClient.setInt(2, store);
-        addClient.setString(3, fName);
-        addClient.setString(4, lName);
-        addClient.setString(5, email);
-        addClient.setInt(6, address);
-        addClient.executeUpdate();
+        addCustomer.setInt(1, id);
+        addCustomer.setInt(2, store);
+        addCustomer.setString(3, fName);
+        addCustomer.setString(4, lName);
+        addCustomer.setString(5, email);
+        addCustomer.setInt(6, address);
+        addCustomer.executeUpdate();
         return id;
     }
+    public void updateCustomer(Customer customer) throws SQLException {
+        setCustomer.setString(1, customer.firstName);
+        setCustomer.setString(2, customer.lastName);
+        setCustomer.setString(3, customer.email);
+        setCustomer.setInt(4, customer.address);
+        setCustomer.setInt(5, customer.id);
+        setCustomer.executeUpdate();
+    }
+
     public ResultSet getAll() throws SQLException {
         currentSet = all.executeQuery();
         return currentSet;
@@ -68,6 +89,5 @@ public class ClientModel {
             return -1;
 
         }
-
     }
 }
