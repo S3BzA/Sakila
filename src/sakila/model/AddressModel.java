@@ -8,12 +8,29 @@ public class AddressModel {
         String phone,
         String city, String country) {}
 
+    public record City(int id, String name, int country) {
+
+        @Override
+        public String toString() {
+            return name;
+        }
+    }
+    public record Country(int id, String name) {
+        @Override
+        public String toString() {
+            return name;
+        }
+    }
+
     PreparedStatement addCountry;
     PreparedStatement addCity;
     PreparedStatement addAddress;
 
+    PreparedStatement getCities;
+    PreparedStatement getCountries;
+
     static AddressModel instance = null;
-    static AddressModel getInstance() throws SQLException {
+    public static AddressModel getInstance() throws SQLException {
         if(instance == null) {
             instance = new AddressModel();
         }
@@ -26,6 +43,9 @@ public class AddressModel {
         addAddress = connection.prepareStatement("INSERT INTO country(country) VALUES (?)", Statement.RETURN_GENERATED_KEYS);
         addCity = connection.prepareStatement("INSERT INTO city(country_id, country) VALUES (?, ?)", Statement.RETURN_GENERATED_KEYS);
         addCountry = connection.prepareStatement("INSERT INTO address(address, address2, district, city_id, postal_code, phone) VALUES (?,?,?,?,?,?)", Statement.RETURN_GENERATED_KEYS);
+
+        getCities = connection.prepareStatement("SELECT city_id, city, ci.country_id as country_id FROM city ci INNER JOIN country co ON ci.country_id = co.country_id WHERE country like ?");
+        getCountries = connection.prepareStatement("SELECT country_id, country FROM country");
     }
     private static int getInsertKey(PreparedStatement stmt) throws SQLException {
         ResultSet set = stmt.getGeneratedKeys();
@@ -48,5 +68,28 @@ public class AddressModel {
         addAddress.setString(8, address.phone);
         addAddress.executeUpdate();
         return getInsertKey(addAddress);
+    }
+    public City[] getCities(String country) throws SQLException {
+        getCities.setString(1, country == null ? "%" : country);
+        ResultSet res = getCities.executeQuery();
+        res.last();
+        City[] cities = new City[res.getRow()];
+        res.beforeFirst();
+        for(int i = 0; res.next(); i++) {
+            cities[i] = new City(res.getInt("city_id"), res.getString("city"), res.getInt("country_id"));
+        }
+
+        return cities;
+    }
+    public Country[] getCountries() throws SQLException {
+        ResultSet res = getCountries.executeQuery();
+        res.last();
+        Country[] countries = new Country[res.getRow()];
+        res.beforeFirst();
+        for(int i = 0; res.next(); i++) {
+            countries[i] = new Country(res.getInt("country_id"), res.getString("country"));
+        }
+
+        return countries;
     }
 }
