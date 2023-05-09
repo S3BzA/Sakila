@@ -5,12 +5,13 @@ import java.sql.*;
 public class CustomerModel {
     Connection connection;
 
-    public record Customer(String firstName, String lastName, String email, int address) {}
+    public record Customer(String firstName, String lastName, String email, int address, int store) {}
 
     PreparedStatement all;
     PreparedStatement removeCustomer;
     PreparedStatement addCustomer;
     PreparedStatement setCustomer;
+    PreparedStatement getCustomer;
 
     ResultSet currentSet = null;
 
@@ -36,6 +37,11 @@ public class CustomerModel {
                 last_name=?,
                 email=?,
                 address_id=?,
+            WHERE customer_id=?
+        """);
+        getCustomer = connection.prepareStatement("""
+            SELECT first_name, last_name, email, address_id, store_id
+            FROM customer
             WHERE customer_id=?
         """);
     }
@@ -65,6 +71,19 @@ public class CustomerModel {
         currentSet = all.executeQuery();
         return currentSet;
     }
+    public Customer getByID(int id) throws SQLException {
+        getCustomer.setInt(1, id);
+        ResultSet res = getCustomer.executeQuery();
+        if(!res.next()) return null;
+        return new Customer(
+            res.getString("first_name"),
+            res.getString("last_name"),
+            res.getString("email"),
+            res.getInt("address_id"),
+            res.getInt("store_id")
+        );
+    }
+
     public int getCustomerFromRow(int rowIndex) {
         if(currentSet == null) return -1;
         try {
