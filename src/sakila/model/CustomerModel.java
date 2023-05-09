@@ -1,18 +1,16 @@
 package sakila.model;
 
 import java.sql.*;
-import java.time.Instant;
 
 public class CustomerModel {
     Connection connection;
 
-    public record Customer(int id, String firstName, String lastName, String email, int address) {}
+    public record Customer(String firstName, String lastName, String email, int address) {}
 
     PreparedStatement all;
     PreparedStatement removeCustomer;
     PreparedStatement addCustomer;
     PreparedStatement setCustomer;
-    PreparedStatement nextID;
 
     ResultSet currentSet = null;
 
@@ -25,12 +23,12 @@ public class CustomerModel {
         """);
         removeCustomer = connection.prepareStatement("""
             UPDATE customer
-            SET active=FALSE, last_update=?
+            SET active=FALSE
             WHERE customer_id=?
         """);
         addCustomer = connection.prepareStatement("""
-            INSERT INTO customer
-            VALUES (?,?,?,?,?,?,TRUE,CURRENT_TIMESTAMP(),CURRENT_TIMESTAMP());
+            INSERT INTO customer(store_id, first_name, last_name, email, address_id)
+            VALUES (?,?,?,?,?);
         """);
         setCustomer = connection.prepareStatement("""
             UPDATE customer SET
@@ -38,39 +36,28 @@ public class CustomerModel {
                 last_name=?,
                 email=?,
                 address_id=?,
-                last_update=CURRENT_TIMESTAMP()
             WHERE customer_id=?
         """);
-        nextID = connection.prepareStatement("SELECT MAX(customer_id)+1 as id FROM customer");
-    }
-    private int newCustomerID() throws SQLException {
-        ResultSet set = nextID.executeQuery();
-        if(set.next()) return set.getInt(1);
-        return -1;
     }
 
     public void removeUser(int clientID) throws SQLException {
-        removeCustomer.setTimestamp(1, Timestamp.from(Instant.now()));
-        removeCustomer.setInt(2, clientID);
+        removeCustomer.setInt(1, clientID);
         removeCustomer.executeUpdate();
     }
-    public int addUser(String fName, String lName, String email, int address, int store) throws SQLException {
-        int id = newCustomerID();
-        addCustomer.setInt(1, id);
-        addCustomer.setInt(2, store);
-        addCustomer.setString(3, fName);
-        addCustomer.setString(4, lName);
-        addCustomer.setString(5, email);
-        addCustomer.setInt(6, address);
+    public void addUser(String fName, String lName, String email, int address, int store) throws SQLException {
+        addCustomer.setInt(1, store);
+        addCustomer.setString(2, fName);
+        addCustomer.setString(3, lName);
+        addCustomer.setString(4, email);
+        addCustomer.setInt(5, address);
         addCustomer.executeUpdate();
-        return id;
     }
-    public void updateCustomer(Customer customer) throws SQLException {
+    public void updateCustomer(int id, Customer customer) throws SQLException {
         setCustomer.setString(1, customer.firstName);
         setCustomer.setString(2, customer.lastName);
         setCustomer.setString(3, customer.email);
         setCustomer.setInt(4, customer.address);
-        setCustomer.setInt(5, customer.id);
+        setCustomer.setInt(5, id);
         setCustomer.executeUpdate();
     }
 
