@@ -23,6 +23,7 @@ public class AddressModel {
     }
 
     PreparedStatement getCountry;
+    PreparedStatement getAddress;
 
     PreparedStatement addCountry;
     PreparedStatement addCity;
@@ -47,6 +48,20 @@ public class AddressModel {
         addAddress = connection.prepareStatement("INSERT INTO address(address, address2, district, city_id, postal_code, phone) VALUES (?,?,?,?,?,?)", Statement.RETURN_GENERATED_KEYS);
 
         getCountry = connection.prepareStatement("SELECT country_id FROM country WHERE country=?");
+        getAddress = connection.prepareStatement("""
+            SELECT
+                address,
+                address2,
+                phone,
+                postal_code,
+                district,
+                Co.country as country,
+                Ci.city as city
+            FROM address A
+                INNER JOIN city Ci on Ci.city_id = A.city_id
+                INNER JOIN city Co on Ci.country_id = Co.country_id
+            WHERE address_id=?;
+        """);
 
         getCities = connection.prepareStatement("SELECT city_id, city, ci.country_id as country_id FROM city ci INNER JOIN country co ON ci.country_id = co.country_id WHERE country like ?");
         getCountries = connection.prepareStatement("SELECT country_id, country FROM country");
@@ -105,6 +120,20 @@ public class AddressModel {
         }
 
         return countries;
+    }
+    public Address getByID(int id) throws SQLException {
+        getAddress.setInt(1, id);
+        ResultSet res = getAddress.executeQuery();
+        if(!res.next()) return null;
+        return new AddressModel.Address(
+                res.getString("address"),
+                res.getString("address2"),
+                res.getString("district"),
+                res.getString("postal_code"),
+                res.getString("phone"),
+                res.getString("city"),
+                res.getString("country")
+        );
     }
 
     /**
