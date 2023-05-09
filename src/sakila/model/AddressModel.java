@@ -44,7 +44,7 @@ public class AddressModel {
         Connection connection = Database.getConnection();
 
         addCountry = connection.prepareStatement("INSERT INTO country(country) VALUES (?)", Statement.RETURN_GENERATED_KEYS);
-        addCity = connection.prepareStatement("INSERT INTO city(country_id, country) VALUES (?, ?)", Statement.RETURN_GENERATED_KEYS);
+        addCity = connection.prepareStatement("INSERT INTO city(country_id, city) VALUES (?, ?)", Statement.RETURN_GENERATED_KEYS);
         addAddress = connection.prepareStatement("INSERT INTO address(address, address2, district, city_id, postal_code, phone) VALUES (?,?,?,?,?,?)", Statement.RETURN_GENERATED_KEYS);
 
         getCountry = connection.prepareStatement("SELECT country_id FROM country WHERE country=?");
@@ -74,7 +74,7 @@ public class AddressModel {
 
     private int addCity(String city, int country) throws SQLException {
         addCity.setInt(1, country);
-        addCity.setString(1, city);
+        addCity.setString(2, city);
         addCity.executeUpdate();
         return getInsertKey(addCity);
     }
@@ -88,7 +88,7 @@ public class AddressModel {
         addAddress.setString(3, address.district);
         addAddress.setInt(4, city);
         addAddress.setString(5, address.postalCode);
-        addAddress.setString(8, address.phone);
+        addAddress.setString(6, address.phone);
         addAddress.executeUpdate();
         return getInsertKey(addAddress);
     }
