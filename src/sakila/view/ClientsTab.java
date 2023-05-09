@@ -16,11 +16,11 @@ public class ClientsTab extends JPanel {
     StoreModel storeModel;
     ResultSetTableModel tableModel;
 
-    public ClientsTab(CustomerModel customerModel, AddressModel addressModel, StoreModel storeModel) {
+    public ClientsTab() throws SQLException {
         super();
-        this.customerModel = customerModel;
-        this.addressModel = addressModel;
-        this.storeModel = storeModel;
+        this.customerModel = new CustomerModel();
+        this.addressModel = new AddressModel();
+        this.storeModel = new StoreModel();
 
         this.tableModel = new ResultSetTableModel();
 
@@ -126,7 +126,7 @@ public class ClientsTab extends JPanel {
         JOptionPane.showMessageDialog(SwingUtilities.getWindowAncestor(this),
                 exception.getMessage(), title, JOptionPane.ERROR_MESSAGE);
     }
-    private void updateResults() {
+    public void updateResults() {
         try {
             ResultSet set = customerModel.getAll();
             tableModel.setResultSet(set);

@@ -91,7 +91,7 @@ public class DropsTab extends JPanel {
         add(sidebar, BorderLayout.LINE_END);
         updateResults();
     }
-    private void updateResults() {
+    public void updateResults() {
         try {
             ResultSet set = dropModel.fetchAll();
             tableModel.setResultSet(set);
