@@ -18,13 +18,28 @@ public class GenreTab extends JPanel{
     public GenreTab(GenreModel model)
     {
         super();
-        this.model =
+        this.model = model;
+        this.tableModel = new ResultSetTableModel();
 
+        JTable table = new JTable(tableModel);
+        JScrollPane scrollPane = new JScrollPane(table);
+        table.setFillsViewportHeight(true);
 
         JPanel panel = new JPanel();
-        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
-//        panel.add(new JLabel("GenreTab"));
+        panel.setLayout(new BorderLayout());
+
+        panel.add(scrollPane);
 
         add(panel, BorderLayout.LINE_END);
+        updateResults();
+    }
+
+    private void updateResults() {
+        try {
+            ResultSet set = model.fetchResults();
+            tableModel.setResultSet(set);
+        }
+        catch(SQLException ignored) {
+        }
     }
 }
