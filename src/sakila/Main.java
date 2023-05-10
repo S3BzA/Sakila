@@ -2,6 +2,8 @@ package sakila;
 
 
 import sakila.model.*;
+import sakila.view.FilmTab;
+import sakila.view.GenreTab;
 import sakila.view.NotificationsTab;
 import sakila.view.StaffTab;
 
@@ -16,12 +18,13 @@ public class Main {
         win.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         StaffModel model = new StaffModel();
+        FilmModel filmModel = new FilmModel();
 
         JTabbedPane tabbedPane = new JTabbedPane();
         tabbedPane.add("Notifications", new NotificationsTab());
         tabbedPane.add("Staff", new StaffTab(model));
-        tabbedPane.add("Film", new JLabel("Clothes?"));
-        tabbedPane.add("Report", new JLabel("Soup?"));
+        tabbedPane.add("Film", new FilmTab(filmModel));
+        tabbedPane.add("Report", new GenreTab());
 
         win.setContentPane(tabbedPane);
         win.setVisible(true);
