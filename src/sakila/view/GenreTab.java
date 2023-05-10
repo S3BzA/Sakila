@@ -1,5 +1,9 @@
 package sakila.view;
 
+import sakila.model.GenreModel;
+import sakila.model.ResultSetTableModel;
+
+
 import javax.swing.*;
 import java.awt.*;
 import java.sql.ResultSet;
@@ -8,10 +12,13 @@ import java.util.HashMap;
 
 public class GenreTab extends JPanel{
 
-    public GenreTab()
+    GenreModel model;
+    ResultSetTableModel tableModel;
+
+    public GenreTab(GenreModel model)
     {
         super();
-
+        this.model =
 
 
         JPanel panel = new JPanel();
