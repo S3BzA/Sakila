@@ -79,7 +79,9 @@ public class FilmTab extends JPanel
             model.setParameter("special_features",txfFields.get(10).getText());
             try
             {
-                model.insertFilm(txfFields.get(3).getText(),txfFields.get(4).getText());
+                String orgLang = txfFields.get(4).getText();
+                if(orgLang.isEmpty()) orgLang = null;
+                model.insertFilm(txfFields.get(3).getText(),orgLang);
                 System.out.println("Film Inserted Successfully");
             }
             catch(SQLException ignored)

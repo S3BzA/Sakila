@@ -72,16 +72,16 @@ public class FilmModel {
         return inputMap.get(key);
     }
 
-    public void insertFilm(String lang1, String lang2) throws SQLException
+    public void insertFilm(String lang, String orgLang) throws SQLException
     {
-        int id1 = addLanguage(lang1);
-        int id2 = addLanguage(lang2);
+        int id1 = addLanguage(lang);
+        if(orgLang != null) filmInsert.setInt(5, addLanguage(orgLang));
+        else filmInsert.setNull(5, Types.INTEGER);
 
         filmInsert.setString(1,inputMap.get("title"));
         filmInsert.setString(2,inputMap.get("description"));
         filmInsert.setInt(3, Integer.parseInt(inputMap.get("release_year")));
         filmInsert.setInt(4, id1);
-        filmInsert.setInt(5, id2);
         filmInsert.setInt(6, Integer.parseInt(inputMap.get("rental_duration")));
         filmInsert.setDouble(7, Double.parseDouble(inputMap.get("rental_rate")));
         filmInsert.setInt(8, Integer.parseInt(inputMap.get("length")));
