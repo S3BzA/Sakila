@@ -11,9 +11,13 @@ public class GenreTab extends JPanel{
     public GenreTab()
     {
         super();
+
+
+
         JPanel panel = new JPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
-        panel.add(new JLabel("GenreTab"));
+//        panel.add(new JLabel("GenreTab"));
+
         add(panel, BorderLayout.LINE_END);
     }
 }
