@@ -1,27 +1,29 @@
 package sakila;
 
-import sakila.model.DatabaseConfig;
-import sakila.model.StaffModel;
-import sakila.model.FilmModel;
+
+import sakila.model.*;
+import sakila.view.NotificationsTab;
 import sakila.view.StaffTab;
-import sakila.view.FilmTab;
 
 import javax.swing.*;
-import java.sql.*;
 
 public class Main {
     public static void main(String[] args) throws Exception {
 
-        JFrame frame = new JFrame("Film");
-        JPanel panel = new FilmTab(new FilmModel());
+        UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+        JFrame win = new JFrame("Sakila");
+        win.setSize(800, 600);
+        win.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        frame.setContentPane(panel);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(600,400);
-        frame.setVisible(true);
+        StaffModel model = new StaffModel();
 
-//        System.out.println("closed! " + count);
-//        frame.setContentPane(panel);
-//        frame.setVisible(true);
+        JTabbedPane tabbedPane = new JTabbedPane();
+        tabbedPane.add("Notifications", new NotificationsTab());
+        tabbedPane.add("Staff", new StaffTab(model));
+        tabbedPane.add("Film", new JLabel("Clothes?"));
+        tabbedPane.add("Report", new JLabel("Soup?"));
+
+        win.setContentPane(tabbedPane);
+        win.setVisible(true);
     }
 }
