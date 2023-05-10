@@ -17,7 +17,7 @@ public class GenreModel {
                 SELECT
                     i.store_id,
                     c.name,
-                    COUNT(*) AS num_films
+                    COUNT(*) AS number_of_films
                 FROM
                     inventory i
                     INNER JOIN film f ON i.film_id = f.film_id

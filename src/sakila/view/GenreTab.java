@@ -8,7 +8,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.HashMap;
 
 public class GenreTab extends JPanel{
 
@@ -21,20 +20,19 @@ public class GenreTab extends JPanel{
         this.model = model;
         this.tableModel = new ResultSetTableModel();
 
+        setLayout(new BorderLayout());
+
         JTable table = new JTable(tableModel);
         JScrollPane scrollPane = new JScrollPane(table);
         table.setFillsViewportHeight(true);
 
-        JPanel panel = new JPanel();
-        panel.setLayout(new BorderLayout());
 
-        panel.add(scrollPane);
-
-        add(panel, BorderLayout.LINE_END);
+        add(table.getTableHeader(), BorderLayout.PAGE_START);
+        add(scrollPane, BorderLayout.CENTER);
         updateResults();
     }
 
-    private void updateResults() {
+    public void updateResults() {
         try {
             ResultSet set = model.fetchResults();
             tableModel.setResultSet(set);

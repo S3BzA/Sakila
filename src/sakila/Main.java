@@ -21,10 +21,12 @@ public class Main {
         FilmModel filmModel = new FilmModel();
 
         JTabbedPane tabbedPane = new JTabbedPane();
+        GenreTab tab = new GenreTab(new GenreModel());
         tabbedPane.add("Notifications", new NotificationsTab());
         tabbedPane.add("Staff", new StaffTab(model));
         tabbedPane.add("Film", new FilmTab(filmModel));
-        tabbedPane.add("Report", new GenreTab());
+        tabbedPane.add("Report", tab);
+        tabbedPane.addChangeListener(e -> tab.updateResults());
 
         win.setContentPane(tabbedPane);
         win.setVisible(true);
