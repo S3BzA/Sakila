@@ -2,7 +2,6 @@ package sakila.view;
 
 import sakila.model.FilmModel;
 import sakila.model.ResultSetTableModel;
-import sakila.model.StaffModel;
 
 import javax.swing.*;
 import java.awt.*;
@@ -51,17 +50,17 @@ public class FilmTab extends JPanel
         GridBagConstraints bagConst = new GridBagConstraints();
         bagConst.fill = GridBagConstraints.HORIZONTAL;
         bagConst.weightx = 1;
-        bagConst.insets = new Insets(6,3,6,3);
-        bagConst.ipady = 8;
+        bagConst.insets = new Insets(3,3,3,3);
         bagConst.gridy = 0;
         HashMap<Integer, JTextField> txfFields = new HashMap<>();
         int index = 0;
         for (String text : placeholderTexts) {
+            inputPane.add(new JLabel(text), bagConst);
+            bagConst.gridy++;
             JTextField textField = new JTextField();
             textField.setSize(100,30);
             textField.setToolTipText(text);
             textField.setHorizontalAlignment(JTextField.CENTER);
-            textField.setText(text);
             txfFields.put(index,textField);
             inputPane.add(textField,bagConst);
             index++;
